@@ -1,0 +1,9 @@
+items:
+  first:
+    material: grass_block
+    display_name: "Cool Grass Block"
+    lore:
+      - "Line one"
+      - "Line Two"
+      - "Line Three"
+    custom_model_data: 1
