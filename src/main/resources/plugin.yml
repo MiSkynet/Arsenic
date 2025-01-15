@@ -1,0 +1,5 @@
+name: Arsenic
+version: '0.0.1'
+main: de.miskynet.arsenic.Main
+api-version: '1.21'
+description: A Shop Plugin
