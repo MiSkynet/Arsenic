@@ -1,5 +1,7 @@
 package de.miskynet.arsenic.commands;
 
+import de.miskynet.arsenic.Main;
+import de.miskynet.arsenic.utils.CustomConfig;
 import de.miskynet.arsenic.utils.InventoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -21,8 +23,12 @@ public class openInventory implements CommandExecutor {
         // Cast the command sender to a player
         Player player = (Player) commandSender;
 
+        // Set the title and size of the inventory
+        Main.getInstance().setTitle();
+        Main.getInstance().setSize();
+
         // Open the inventory
-        player.openInventory(InventoryManager.addItems(Bukkit.createInventory(null, 54, "Shop Inventory")));
+        player.openInventory(InventoryManager.addItems(Bukkit.createInventory(null, Main.getInstance().getSize(), Main.getInstance().getTitle())));
 
         return true;
     }

@@ -1,9 +1,16 @@
+title: "Shop Inventory"
+size: 54
+
 items:
   first:
     material: grass_block
     display_name: "Cool Grass Block"
     lore:
-      - "Line one"
-      - "Line Two"
-      - "Line Three"
+      - "§cLine one"
+      - "Buy for %buy_price%"
+      - "Sell for %sell_price%"
     custom_model_data: 1
+    amount: 4
+    price:
+      buy: 10
+      sell: 5

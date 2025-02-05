@@ -1,5 +1,6 @@
 package de.miskynet.arsenic.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,13 +10,18 @@ public class InventoryManager {
     public static Inventory addItems(Inventory inventory) {
 
         for (String key : CustomConfig.get("pages").getConfigurationSection("items").getKeys(false)) {
-            ItemStack itemStack = ItemUtil.modifyItemStack(key);
-            inventory.addItem(itemStack);
-        }
 
+            // Get the item stack and the slot
+            ItemStack itemStack = ItemUtil.modifyItemStack(key, true, true, true, true);
+            int slot = CustomConfig.get("pages").getInt("items." + key + ".slot");
+
+            try {
+
+                inventory.setItem(slot, ItemUtil.modifyItemStack(key, true, true, true, true));
+            }catch (NullPointerException e) {
+                inventory.addItem(itemStack);
+            }
+        }
         return inventory;
     }
-
-
-
 }
