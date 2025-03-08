@@ -1,0 +1,12 @@
+title: ""
+size: 0
+
+items:
+  diamond:
+    material: DIAMOND
+    name: "&bDiamond"
+    lore:
+      - "&7This is a diamond."
+    price:
+      buy: 100
+      sell: 50

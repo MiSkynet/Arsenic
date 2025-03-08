@@ -4,3 +4,9 @@ main: de.miskynet.arsenic.Main
 api-version: '1.21'
 authors: [ MiSkynet ]
 description: A Shop plugin
+commands:
+  shop:
+    description: Open the shop
+    usage: /shop
+    permission: arsenic.shop
+    aliases: [ s ]
