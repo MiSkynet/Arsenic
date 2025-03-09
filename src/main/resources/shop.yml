@@ -1,12 +1,20 @@
-title: ""
-size: 0
+# Define the title for the shop GUI
+title: "Shop Inventory"
 
+# Define the number of rows for the shop GUI (1-6)
+rows: 3
+
+# Define the items that are available in the shop
 items:
   diamond:
     material: DIAMOND
     name: "&bDiamond"
+    customModelData: 1
+    slot: 7
     lore:
       - "&7This is a diamond."
+      - "&7Price: &b%priceBuy%"
+      - "&7Sell price: &b%priceSell%"
     price:
       buy: 100
       sell: 50

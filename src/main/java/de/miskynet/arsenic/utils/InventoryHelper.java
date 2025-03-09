@@ -1,10 +1,8 @@
 package de.miskynet.arsenic.utils;
 
 import de.miskynet.arsenic.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.StonecutterInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
@@ -29,16 +27,20 @@ public class InventoryHelper {
 //        }
 //    }
 
+    // Set the Material, Name, Lore and CustomModelData
     public static ItemStack createItemStack(String key) {
 
+        // Get the material, name and lore
         String material = null;
         String itemName = "";
         List<String> lore = null;
+        Integer customModelData = null;
 
         try {
             material = CustomConfigs.get("shop").getString("items." + key + ".material");
             itemName = CustomConfigs.get("shop").getString("items." + key + ".name");
             lore = CustomConfigs.get("shop").getStringList("items." + key + ".lore");
+            customModelData = CustomConfigs.get("shop").getInt("items." + key + ".customModelData");
         }catch (NullPointerException ignored) {}
 
         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
@@ -59,9 +61,14 @@ public class InventoryHelper {
             itemMeta.setLore(lore);
         }
 
+        // Set the custom model data
+        if (customModelData != null) {
+            itemMeta.setCustomModelData(customModelData);
+        }
+
+        // Set the item meta
         itemStack.setItemMeta(itemMeta);
         return itemStack;
-
     }
 
 }
