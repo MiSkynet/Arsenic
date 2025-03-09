@@ -28,16 +28,23 @@ public class openInventory implements CommandExecutor {
 
         Inventory inventory = Bukkit.createInventory(null, rows, title);
 
-        CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false).forEach(key -> {
+        Integer addedItems = 0;
 
-            ItemStack itemStack = InventoryHelper.createItemStack(key);
+        for (String key : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
 
-            if (CustomConfigs.get("shop").getInt("items." + key + ".slot") != 0) {
-                inventory.setItem(CustomConfigs.get("shop").getInt("items." + key + ".slot") - 1, itemStack);
-            } else {
-                inventory.addItem(itemStack);
+            if (addedItems < inventory.getSize()) {
+                ItemStack itemStack = InventoryHelper.createItemStack(key);
+
+                if (CustomConfigs.get("shop").getInt("items." + key + ".slot") != 0) {
+                    inventory.setItem(CustomConfigs.get("shop").getInt("items." + key + ".slot") - 1, itemStack);
+                } else {
+                    inventory.addItem(itemStack);
+                }
+                addedItems++;
+            }else {
+                break;
             }
-        });
+        }
 
         player.openInventory(inventory);
 

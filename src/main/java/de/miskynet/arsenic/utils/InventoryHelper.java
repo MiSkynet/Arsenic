@@ -7,38 +7,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-import static de.miskynet.arsenic.Main.replaceString;
-
 public class InventoryHelper {
-
-//    public static void getEachItem() {
-//
-//        // Get each item for the inventory
-//        try {
-//            CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false).forEach(key -> {
-//
-//                String item = CustomConfigs.get("shop").getString("items." + key + ".material");
-//                Bukkit.getLogger().info("Key: " + key);
-//                Bukkit.getLogger().info("Item: " + item);
-//
-//            });
-//        }catch (NullPointerException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     // Set the Material, Name, Lore and CustomModelData
     public static ItemStack createItemStack(String key) {
 
         // Get the material, name and lore
         String material = null;
-        String itemName = "";
+        String displayName = null;
         List<String> lore = null;
         Integer customModelData = null;
 
         try {
             material = CustomConfigs.get("shop").getString("items." + key + ".material");
-            itemName = CustomConfigs.get("shop").getString("items." + key + ".name");
+            displayName = CustomConfigs.get("shop").getString("items." + key + ".displayName");
             lore = CustomConfigs.get("shop").getStringList("items." + key + ".lore");
             customModelData = CustomConfigs.get("shop").getInt("items." + key + ".customModelData");
         }catch (NullPointerException ignored) {}
@@ -49,8 +31,8 @@ public class InventoryHelper {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         // Set the display name
-        if (itemName != null) {
-            itemMeta.setDisplayName(Main.replaceString(itemName, key));
+        if (displayName != null) {
+            itemMeta.setDisplayName(Main.replaceString(displayName, key));
         }
 
         // Set the lore

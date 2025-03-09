@@ -8,7 +8,7 @@ rows: 3
 items:
   diamond:
     material: DIAMOND
-    name: "&bDiamond"
+    displayName: "&bDiamond"
     customModelData: 1
     slot: 7
     lore:
