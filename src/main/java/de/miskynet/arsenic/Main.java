@@ -1,7 +1,7 @@
 package de.miskynet.arsenic;
 
-import de.miskynet.arsenic.commands.openInventory;
-import de.miskynet.arsenic.listeners.inventoryClickEvent;
+import de.miskynet.arsenic.commands.OpenInventory;
+import de.miskynet.arsenic.listeners.InventoryClickEvent;
 import de.miskynet.arsenic.utils.CustomConfigs;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -11,8 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Main extends JavaPlugin {
 
     public static final String missingString = "nullString";
-
-    public static Economy econ = null;
+    public static Economy econ;
 
     @Override
     public void onEnable() {
@@ -22,23 +21,18 @@ public final class Main extends JavaPlugin {
         saveDefaultConfig();
         CustomConfigs.setup("shop");
         CustomConfigs.save("shop");
-        getLogger().info("Configs loaded");
 
         if (!setupEconomy() ) {
             getLogger().config("Disabled due to no Vault dependency found");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }else {
-            getLogger().info("Vault dependency found!");
         }
 
         // Register the commands
-        getCommand("shop").setExecutor(new openInventory());
-        getLogger().info("Commands registered");
+        getCommand("shop").setExecutor(new OpenInventory());
 
         // Register the events
-        getServer().getPluginManager().registerEvents(new inventoryClickEvent(), this);
-        getLogger().info("Events registered");
+        getServer().getPluginManager().registerEvents(new InventoryClickEvent(), this);
     }
 
     @Override
@@ -50,6 +44,7 @@ public final class Main extends JavaPlugin {
         return getPlugin(Main.class);
     }
 
+    // Replace the placeholders in the strings
     public static String replaceString(String string, String key) {
 
         String priceSell = CustomConfigs.get("shop").getString("items." + key + ".price.sell");
@@ -68,6 +63,7 @@ public final class Main extends JavaPlugin {
         return string;
     }
 
+    // Set up the economy
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return true;
