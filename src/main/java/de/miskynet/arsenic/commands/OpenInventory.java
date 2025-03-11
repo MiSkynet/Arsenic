@@ -36,20 +36,23 @@ public class OpenInventory implements CommandExecutor {
         for (String key : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
 
             // Check if there is enough space in the inventory
-            if (!(addedItems < inventory.getSize())) {
+            if (addedItems >= inventory.getSize()) {
                 break;
             }
+
+            Bukkit.getLogger().info(CustomConfigs.get("shop").getString("items." + key + ".material"));
 
             ItemStack itemStack = InventoryHelper.createItemStackFromConfig(key);
 
             // Check if the slot is set in the config
-            if (CustomConfigs.get("shop").getInt("items." + key + ".slot") != 0) {
-                inventory.setItem(CustomConfigs.get("shop").getInt("items." + key + ".slot") - 1, itemStack);
+            int slot = CustomConfigs.get("shop").getInt("items." + key + ".slot");
+
+            if (slot != 0) {
+                inventory.setItem(slot - 1, itemStack);
             } else {
                 inventory.addItem(itemStack);
             }
             addedItems++;
-
         }
 
         player.openInventory(inventory);

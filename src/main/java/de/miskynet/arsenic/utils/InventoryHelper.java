@@ -12,26 +12,42 @@ import java.util.List;
 
 public class InventoryHelper {
 
+    // Create an inventory
+    public static Inventory createInventory(String fileName) {
+        String title = CustomConfigs.get(fileName).getString("title") != null ? CustomConfigs.get("shop").getString("title") : Main.missingString;
+        Integer rows = (CustomConfigs.get(fileName).getInt("rows") != 0) && (CustomConfigs.get("shop").getInt("rows") >= 1) && (CustomConfigs.get("shop").getInt("rows") <= 6) ? CustomConfigs.get("shop").getInt("rows") * 9 : 9;
+
+        Inventory inventory = Bukkit.createInventory(null, rows, title);
+        return inventory;
+    }
+
     // Set the Material, Name, Lore and CustomModelData
     public static ItemStack createItemStackFromConfig(String key) {
 
         // Get the material, name and lore
-        String material = null;
+        String material = "STONE";
         String displayName = null;
         List<String> lore = null;
         Integer customModelData = null;
+        Integer amount = null;
 
         try {
             material = CustomConfigs.get("shop").getString("items." + key + ".material");
             displayName = CustomConfigs.get("shop").getString("items." + key + ".displayName");
             lore = CustomConfigs.get("shop").getStringList("items." + key + ".lore");
             customModelData = CustomConfigs.get("shop").getInt("items." + key + ".customModelData");
+            amount = CustomConfigs.get("shop").getInt("items." + key + ".amount");
         }catch (NullPointerException ignored) {}
 
         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
 
         // Get the item meta
         ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (material == null) {
+            Bukkit.getLogger().severe("Invalid material for key: " + key);
+            return new ItemStack(Material.AIR);
+        }
 
         // Set the display name
         if (displayName != null) {
@@ -51,11 +67,18 @@ public class InventoryHelper {
             itemMeta.setCustomModelData(customModelData);
         }
 
+        // Set the amount
+        if (amount != null && amount > 1) {
+            itemStack.setAmount(amount);
+        }
+
         // Set the item meta
         itemStack.setItemMeta(itemMeta);
+
         return itemStack;
     }
 
+    // Create an item stack from an item
     public static ItemStack createItemStackFromItem(Material material, String displayName, List<String> lore, Integer customModelData) {
 
         // Get the item meta
@@ -86,25 +109,29 @@ public class InventoryHelper {
         return itemStack;
     }
 
+    // Set up the buy inventory
     public static Inventory setupBuyInventory(String key) {
 
-        Inventory inventory = Bukkit.createInventory(null, 27, "Buy " + key);
+        // Create the inventory
+        Inventory inventory = createInventory("buyMenu");
 
-        List<String> lore = new ArrayList<>();
-        lore.add("§7Left click to buy");
-        inventory.setItem(9, createItemStackFromItem(Material.LIME_STAINED_GLASS_PANE, "§a§lBuy 1", lore, null));
-        inventory.setItem(10, createItemStackFromItem(Material.LIME_STAINED_GLASS_PANE, "§a§lBuy 2", lore, null));
-        inventory.setItem(11, createItemStackFromItem(Material.LIME_STAINED_GLASS_PANE, "§a§lBuy 8", lore, null));
-        inventory.setItem(12, createItemStackFromItem(Material.LIME_STAINED_GLASS_PANE, "§a§lBuy 32", lore, null));
+        // Loop through all items in the config and add them to the inventory
+        for (String buyMenuKey : CustomConfigs.get("buyMenu").getConfigurationSection("items").getKeys(false)) {
 
-        inventory.setItem(13, createItemStackFromConfig(key));
+            ItemStack itemStack = createItemStackFromConfig(buyMenuKey);
 
-        inventory.setItem(14, createItemStackFromItem(Material.RED_STAINED_GLASS_PANE, "§c§lSell 32", lore, null));
-        inventory.setItem(15, createItemStackFromItem(Material.RED_STAINED_GLASS_PANE, "§c§lSell 8", lore, null));
-        inventory.setItem(16, createItemStackFromItem(Material.RED_STAINED_GLASS_PANE, "§c§lSell 2", lore, null));
-        inventory.setItem(17, createItemStackFromItem(Material.RED_STAINED_GLASS_PANE, "§c§lSell 1", lore, null));
+            int slot = CustomConfigs.get("shop").getInt("items." + key + ".slot");
+            if (slot != 0) {
+                inventory.setItem(slot - 1, itemStack);
+            } else {
+                inventory.addItem(itemStack);
+            }
+        }
+
+        // Add the clicked item to the inventory
+        int clickItemSlot = CustomConfigs.get("shop").getInt("clickedItemSlot");
+        inventory.setItem(clickItemSlot, createItemStackFromConfig(key));
 
         return inventory;
     }
-
 }

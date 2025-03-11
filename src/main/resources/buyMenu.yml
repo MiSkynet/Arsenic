@@ -1,0 +1,21 @@
+# Define the title for the shop GUI
+title: "Shop Inventory"
+
+# Define the number of rows for the shop GUI (1-6)
+rows: 3
+
+clickedItemSlot: 13
+
+items:
+  pane:
+    material: LIME_STAINED_GLASS_PANE
+    displayName: "&a&lBuy %amount%"
+    customModelData: 1
+    slot: 7
+    amount: 1
+    lore:
+      - "&7Click to buy."
+    itemData:
+      type: BUY
+      amount: 1
+      price: 100

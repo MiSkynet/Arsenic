@@ -21,6 +21,8 @@ public final class Main extends JavaPlugin {
         saveDefaultConfig();
         CustomConfigs.setup("shop");
         CustomConfigs.save("shop");
+        CustomConfigs.setup("buyMenu");
+        CustomConfigs.save("buyMenu");
 
         if (!setupEconomy() ) {
             getLogger().config("Disabled due to no Vault dependency found");
