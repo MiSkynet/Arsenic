@@ -4,8 +4,10 @@ title: "Shop Inventory"
 # Define the number of rows for the shop GUI (1-6)
 rows: 3
 
+# Select the shop, where the item to buy should be placed (slot)
 clickedItemSlot: 13
 
+# Define the items to buy/sell the item
 items:
   pane:
     material: LIME_STAINED_GLASS_PANE

@@ -1,0 +1,5 @@
+generalItemLore:
+  behavior: above
+  lore:
+    - "&7Price: %priceBuy%"
+    - "&7Sell Price: %priceSell%"

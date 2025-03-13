@@ -25,10 +25,7 @@ public class OpenInventory implements CommandExecutor {
         Player player = (Player) commandSender;
 
         // Get the title and rows from the config
-        String title = CustomConfigs.get("shop").getString("title") != null ? CustomConfigs.get("shop").getString("title") : Main.missingString;
-        Integer rows = (CustomConfigs.get("shop").getInt("rows") != 0) && (CustomConfigs.get("shop").getInt("rows") >= 1) && (CustomConfigs.get("shop").getInt("rows") <= 6) ? CustomConfigs.get("shop").getInt("rows") * 9 : 9;
-
-        Inventory inventory = Bukkit.createInventory(null, rows, title);
+        Inventory inventory = InventoryHelper.createInventory("shop");
 
         Integer addedItems = 0;
 
@@ -40,9 +37,7 @@ public class OpenInventory implements CommandExecutor {
                 break;
             }
 
-            Bukkit.getLogger().info(CustomConfigs.get("shop").getString("items." + key + ".material"));
-
-            ItemStack itemStack = InventoryHelper.createItemStackFromConfig(key);
+            ItemStack itemStack = InventoryHelper.createItemStackFromConfig("shop", key);
 
             // Check if the slot is set in the config
             int slot = CustomConfigs.get("shop").getInt("items." + key + ".slot");

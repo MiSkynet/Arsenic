@@ -37,33 +37,11 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryClickEvent(), this);
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
-
     public static Main getInstance() {
         return getPlugin(Main.class);
     }
 
-    // Replace the placeholders in the strings
-    public static String replaceString(String string, String key) {
 
-        String priceSell = CustomConfigs.get("shop").getString("items." + key + ".price.sell");
-        String priceBuy = CustomConfigs.get("shop").getString("items." + key + ".price.buy");
-
-        if (priceSell != null) {
-            string = string.replace("%priceSell%", priceSell);
-        }
-
-        if (priceBuy != null) {
-            string = string.replace("%priceBuy%", priceBuy);
-        }
-
-        string = ChatColor.translateAlternateColorCodes('&', string);
-
-        return string;
-    }
 
     // Set up the economy
     private boolean setupEconomy() {

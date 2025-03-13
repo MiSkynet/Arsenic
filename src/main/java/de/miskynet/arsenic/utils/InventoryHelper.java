@@ -2,7 +2,9 @@ package de.miskynet.arsenic.utils;
 
 import de.miskynet.arsenic.Main;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,29 +16,37 @@ public class InventoryHelper {
 
     // Create an inventory
     public static Inventory createInventory(String fileName) {
-        String title = CustomConfigs.get(fileName).getString("title") != null ? CustomConfigs.get("shop").getString("title") : Main.missingString;
-        Integer rows = (CustomConfigs.get(fileName).getInt("rows") != 0) && (CustomConfigs.get("shop").getInt("rows") >= 1) && (CustomConfigs.get("shop").getInt("rows") <= 6) ? CustomConfigs.get("shop").getInt("rows") * 9 : 9;
+
+        String title = Main.missingString;
+        Integer rows = 9;
+
+        try {
+            title = CustomConfigs.get(fileName).getString("title");
+            rows = CustomConfigs.get(fileName).getInt("rows") * 9;
+        }catch (NullPointerException ignored) {}
 
         Inventory inventory = Bukkit.createInventory(null, rows, title);
         return inventory;
     }
 
     // Set the Material, Name, Lore and CustomModelData
-    public static ItemStack createItemStackFromConfig(String key) {
+    public static ItemStack createItemStackFromConfig(String fileName, String key) {
 
         // Get the material, name and lore
         String material = "STONE";
         String displayName = null;
-        List<String> lore = null;
+        List<String> loreFromItem = null;
+        List<String> loreGeneral = null;
         Integer customModelData = null;
         Integer amount = null;
 
         try {
-            material = CustomConfigs.get("shop").getString("items." + key + ".material");
-            displayName = CustomConfigs.get("shop").getString("items." + key + ".displayName");
-            lore = CustomConfigs.get("shop").getStringList("items." + key + ".lore");
-            customModelData = CustomConfigs.get("shop").getInt("items." + key + ".customModelData");
-            amount = CustomConfigs.get("shop").getInt("items." + key + ".amount");
+            material = CustomConfigs.get(fileName).getString("items." + key + ".material");
+            displayName = CustomConfigs.get(fileName).getString("items." + key + ".displayName");
+            loreFromItem = CustomConfigs.get(fileName).getStringList("items." + key + ".lore");
+            loreGeneral = Main.getInstance().getConfig().getStringList("generalItemLore.lore");
+            customModelData = CustomConfigs.get(fileName).getInt("items." + key + ".customModelData");
+            amount = CustomConfigs.get(fileName).getInt("items." + key + ".amount");
         }catch (NullPointerException ignored) {}
 
         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
@@ -51,15 +61,51 @@ public class InventoryHelper {
 
         // Set the display name
         if (displayName != null) {
-            itemMeta.setDisplayName(Main.replaceString(displayName, key));
+            itemMeta.setDisplayName(InventoryHelper.replaceString(fileName, displayName, key));
         }
 
         // Set the lore
-        if (lore != null) {
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, Main.replaceString(lore.get(i), key));
+        if (loreFromItem != null || loreGeneral != null) {
+
+            // Lore is from the config
+            if (loreFromItem == null && loreGeneral != null) {
+                for (int i = 0; i < loreGeneral.size(); i++) {
+                    loreGeneral.set(i, InventoryHelper.replaceString(fileName, loreGeneral.get(i), key));
+                }
+                if (!(fileName.equals("buyMenu"))) {
+                    itemMeta.setLore(loreGeneral);
+                }
+
+            // Lore is from the item
+            }else if (loreFromItem != null && loreGeneral == null) {
+                for (int i = 0; i < loreFromItem.size(); i++) {
+                    loreFromItem.set(i, InventoryHelper.replaceString(fileName, loreFromItem.get(i), key));
+                }
+                itemMeta.setLore(loreFromItem);
+
+            // Lore is from both
+            }else {
+                List<String> combinedLore = new ArrayList<>();
+
+                // Check if the general lore should be below the item lore
+                if (Main.getInstance().getConfig().getString("generalItemLore.behavior").equals("below")) {
+                    combinedLore.addAll(loreFromItem);
+                    if (!(fileName.equals("buyMenu"))) {
+                        combinedLore.addAll(loreGeneral);
+                    }
+
+                // Set the general lore above the item lore
+                }else {
+                    if (!(fileName.equals("buyMenu"))) {
+                        combinedLore.addAll(loreGeneral);
+                    }
+                    combinedLore.addAll(loreFromItem);
+                }
+                for (int i = 0; i < combinedLore.size(); i++) {
+                    combinedLore.set(i, InventoryHelper.replaceString(fileName, combinedLore.get(i), key));
+                }
+                itemMeta.setLore(combinedLore);
             }
-            itemMeta.setLore(lore);
         }
 
         // Set the custom model data
@@ -74,7 +120,6 @@ public class InventoryHelper {
 
         // Set the item meta
         itemStack.setItemMeta(itemMeta);
-
         return itemStack;
     }
 
@@ -118,9 +163,9 @@ public class InventoryHelper {
         // Loop through all items in the config and add them to the inventory
         for (String buyMenuKey : CustomConfigs.get("buyMenu").getConfigurationSection("items").getKeys(false)) {
 
-            ItemStack itemStack = createItemStackFromConfig(buyMenuKey);
+            ItemStack itemStack = createItemStackFromConfig("buyMenu", buyMenuKey);
 
-            int slot = CustomConfigs.get("shop").getInt("items." + key + ".slot");
+            int slot = CustomConfigs.get("buyMenu").getInt("items." + buyMenuKey + ".slot");
             if (slot != 0) {
                 inventory.setItem(slot - 1, itemStack);
             } else {
@@ -129,9 +174,97 @@ public class InventoryHelper {
         }
 
         // Add the clicked item to the inventory
-        int clickItemSlot = CustomConfigs.get("shop").getInt("clickedItemSlot");
-        inventory.setItem(clickItemSlot, createItemStackFromConfig(key));
+        int clickItemSlot = CustomConfigs.get("buyMenu").getInt("clickedItemSlot");
+        inventory.setItem(clickItemSlot, createItemStackFromConfig("shop", key));
 
         return inventory;
     }
+
+    // Check if an item can be added to the player's inventory
+    public static boolean canAddItem(Player player, ItemStack item) {
+        // Überprüfen, ob das Item null ist
+        if (item == null || item.getType() == null || !(item.getAmount() >= 1)) {
+            return false;
+        }
+
+        Integer itemToFillAmount = item.getAmount();
+
+        // Check if there's an empty slot in the player's inventory
+        if (player.getInventory().firstEmpty() == -1) {
+            for (int i = 0; i < player.getInventory().getSize(); i++) {
+                ItemStack currentItem = player.getInventory().getItem(i);
+
+                // Check if the item is not null before accessing its properties
+                if (currentItem != null && currentItem.getType().equals(item.getType())) {
+                    if (currentItem.getAmount() + itemToFillAmount <= item.getMaxStackSize()) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Replace the placeholders in the strings
+    public static String replaceString(String fileName, String string, String key) {
+
+        if (fileName.equals("shop")) {
+            String priceSell = CustomConfigs.get(fileName).getString("items." + key + ".price.sell");
+            String priceBuy = CustomConfigs.get(fileName).getString("items." + key + ".price.buy");
+
+            if (priceSell != null) {
+                string = string.replace("%priceSell%", priceSell);
+            }
+
+            if (priceBuy != null) {
+                string = string.replace("%priceBuy%", priceBuy);
+            }
+        } else if (fileName.equals("buyMenu")) {
+            Integer itemDataAmount = null;
+            Integer itemDataPrice = null;
+            String itemDataType = null;
+
+            try {
+                itemDataAmount = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.amount");
+                itemDataPrice = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.price");
+                itemDataType = CustomConfigs.get(fileName).getString("items." + key + ".itemData.type");
+            }catch (NullPointerException ignored) {}
+
+            if (itemDataAmount != null) {
+                string = string.replace("%itemDataAmount%", itemDataAmount.toString());
+            }
+
+            if (itemDataPrice != null) {
+                string = string.replace("%itemDataPrice%", itemDataPrice.toString());
+            }
+
+            if (itemDataType != null) {
+                string = string.replace("%itemDataType%", itemDataType);
+            }
+        }
+
+        Integer amount = null;
+        Integer slot = null;
+
+        try {
+            amount = CustomConfigs.get(fileName).getInt("items." + key + ".amount");
+            slot = CustomConfigs.get(fileName).getInt("items." + key + ".slot");
+        }catch (NullPointerException ignored) {}
+
+        if (amount != null) {
+            string = string.replace("%amount%", amount.toString());
+        }
+
+        if (slot != null) {
+            string = string.replace("%slot%", slot.toString());
+        }
+
+        string = ChatColor.translateAlternateColorCodes('&', string);
+
+        return string;
+    }
+
 }
