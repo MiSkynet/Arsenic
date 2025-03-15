@@ -37,7 +37,7 @@ public class OpenInventory implements CommandExecutor {
                 break;
             }
 
-            ItemStack itemStack = InventoryHelper.createItemStackFromConfig("shop", key);
+            ItemStack itemStack = InventoryHelper.createItemStackFromConfig("shop", key, true);
 
             // Check if the slot is set in the config
             int slot = CustomConfigs.get("shop").getInt("items." + key + ".slot");

@@ -29,8 +29,8 @@ public class InventoryHelper {
         return inventory;
     }
 
-    // Set the Material, Name, Lore and CustomModelData
-    public static ItemStack createItemStackFromConfig(String fileName, String key) {
+    // Set the material, name, lore, amount and custommodeldata
+    public static ItemStack createItemStackFromConfig(String fileName, String key, Boolean allowGeneralLore) {
 
         // Get the material, name and lore
         String material = "STONE";
@@ -39,6 +39,7 @@ public class InventoryHelper {
         List<String> loreGeneral = null;
         Integer customModelData = null;
         Integer amount = null;
+        Boolean showGeneralLore = true;
 
         try {
             material = CustomConfigs.get(fileName).getString("items." + key + ".material");
@@ -47,6 +48,7 @@ public class InventoryHelper {
             loreGeneral = Main.getInstance().getConfig().getStringList("generalItemLore.lore");
             customModelData = CustomConfigs.get(fileName).getInt("items." + key + ".customModelData");
             amount = CustomConfigs.get(fileName).getInt("items." + key + ".amount");
+            showGeneralLore = CustomConfigs.get(fileName).get("items." + key + ".showGeneralLore") != null ? CustomConfigs.get(fileName).getBoolean("items." + key + ".showGeneralLore") : true;
         }catch (NullPointerException ignored) {}
 
         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
@@ -68,7 +70,7 @@ public class InventoryHelper {
         if (loreFromItem != null || loreGeneral != null) {
 
             // Lore is from the config
-            if (loreFromItem == null && loreGeneral != null) {
+            if (loreFromItem == null && loreGeneral != null && allowGeneralLore && showGeneralLore) {
                 for (int i = 0; i < loreGeneral.size(); i++) {
                     loreGeneral.set(i, InventoryHelper.replaceString(fileName, loreGeneral.get(i), key));
                 }
@@ -91,13 +93,16 @@ public class InventoryHelper {
                 if (Main.getInstance().getConfig().getString("generalItemLore.behavior").equals("below")) {
                     combinedLore.addAll(loreFromItem);
                     if (!(fileName.equals("buyMenu"))) {
-                        combinedLore.addAll(loreGeneral);
+                        if (allowGeneralLore && showGeneralLore) {
+                            combinedLore.addAll(loreGeneral);
+                        }
                     }
-
                 // Set the general lore above the item lore
                 }else {
                     if (!(fileName.equals("buyMenu"))) {
-                        combinedLore.addAll(loreGeneral);
+                        if (allowGeneralLore && showGeneralLore) {
+                            combinedLore.addAll(loreGeneral);
+                        }
                     }
                     combinedLore.addAll(loreFromItem);
                 }
@@ -163,7 +168,7 @@ public class InventoryHelper {
         // Loop through all items in the config and add them to the inventory
         for (String buyMenuKey : CustomConfigs.get("buyMenu").getConfigurationSection("items").getKeys(false)) {
 
-            ItemStack itemStack = createItemStackFromConfig("buyMenu", buyMenuKey);
+            ItemStack itemStack = createItemStackFromConfig("buyMenu", buyMenuKey, true);
 
             int slot = CustomConfigs.get("buyMenu").getInt("items." + buyMenuKey + ".slot");
             if (slot != 0) {
@@ -175,7 +180,7 @@ public class InventoryHelper {
 
         // Add the clicked item to the inventory
         int clickItemSlot = CustomConfigs.get("buyMenu").getInt("clickedItemSlot");
-        inventory.setItem(clickItemSlot, createItemStackFromConfig("shop", key));
+        inventory.setItem(clickItemSlot, createItemStackFromConfig("shop", key, true));
 
         return inventory;
     }
@@ -212,8 +217,13 @@ public class InventoryHelper {
     public static String replaceString(String fileName, String string, String key) {
 
         if (fileName.equals("shop")) {
-            String priceSell = CustomConfigs.get(fileName).getString("items." + key + ".price.sell");
-            String priceBuy = CustomConfigs.get(fileName).getString("items." + key + ".price.buy");
+            String priceSell = null;
+            String priceBuy = null;
+
+            try {
+                priceSell = CustomConfigs.get(fileName).getString("items." + key + ".price.sell");
+                priceBuy = CustomConfigs.get(fileName).getString("items." + key + ".price.buy");
+            }catch (NullPointerException ignored) {}
 
             if (priceSell != null) {
                 string = string.replace("%priceSell%", priceSell);
@@ -229,7 +239,7 @@ public class InventoryHelper {
 
             try {
                 itemDataAmount = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.amount");
-                itemDataPrice = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.price");
+                itemDataPrice = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.price") * itemDataAmount;
                 itemDataType = CustomConfigs.get(fileName).getString("items." + key + ".itemData.type");
             }catch (NullPointerException ignored) {}
 
@@ -246,13 +256,39 @@ public class InventoryHelper {
             }
         }
 
-        Integer amount = null;
+        String material = null;
+        String displayName = null;
+        Integer customModelData = null;
         Integer slot = null;
+        Integer amount = null;
 
         try {
+            material = CustomConfigs.get(fileName).getString("items." + key + ".material");
+            displayName = CustomConfigs.get(fileName).getString("items." + key + ".displayName");
+            customModelData = CustomConfigs.get(fileName).getInt("items." + key + ".customModelData");
             amount = CustomConfigs.get(fileName).getInt("items." + key + ".amount");
             slot = CustomConfigs.get(fileName).getInt("items." + key + ".slot");
         }catch (NullPointerException ignored) {}
+
+        if (material != null) {
+            string = string.replace("%material%", material);
+        }
+
+        if (displayName != null) {
+            string = string.replace("%displayName%", displayName);
+        }
+
+        if (customModelData != null) {
+            string = string.replace("%customModelData%", customModelData.toString());
+        }
+
+        if (slot != null) {
+            string = string.replace("%slot%", slot.toString());
+        }
+
+        if (amount != null) {
+            string = string.replace("%amount%", amount.toString());
+        }
 
         if (amount != null) {
             string = string.replace("%amount%", amount.toString());

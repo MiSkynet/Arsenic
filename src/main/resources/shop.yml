@@ -12,6 +12,7 @@ items:
     customModelData: 1
     slot: 7
     amount: 1
+    showGeneralLore: true
     lore:
       - "&7This is a diamond."
       - "&7Price: &b%priceBuy%"

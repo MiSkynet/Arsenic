@@ -3,11 +3,13 @@ package de.miskynet.arsenic.listeners;
 import de.miskynet.arsenic.Main;
 import de.miskynet.arsenic.utils.CustomConfigs;
 import de.miskynet.arsenic.utils.InventoryHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
 
 public class InventoryClickEvent implements Listener {
 
@@ -66,28 +68,61 @@ public class InventoryClickEvent implements Listener {
 
                 // Check if the slot a player clicked on is the slot of an item in the config
                 if (clickedSlot == configSlot) {
-                    // Check if the player has enough money
-                    if (Main.econ.getBalance(player) >= CustomConfigs.get("shop").getDouble("items." + key + ".price.buy")) {
+
+                    // Check if the player wants to buy an item
+                    if (CustomConfigs.get("buyMenu").getString("items." + key + ".itemData.type").equals("BUY")) {
+
+                        Integer calculateAmount = CustomConfigs.get("buyMenu").getInt("items." + key + ".itemData.amount");
+                        double itemPrice = 0.0;
 
                         ItemStack itemToBuy = event.getInventory().getItem(CustomConfigs.get("buyMenu").getInt("clickedItemSlot"));
-                        Integer calculateAmount = CustomConfigs.get("buyMenu").getInt("items." + key + ".itemData.amount");
 
-                        itemToBuy.setAmount(calculateAmount);
+                        ItemStack purchasedItem = itemToBuy.clone();
+                        ItemMeta purchasedItemMeta = purchasedItem.getItemMeta();
+                        purchasedItem.setAmount(calculateAmount);
 
-                        if (!InventoryHelper.canAddItem(player, itemToBuy)) {
-                            player.sendMessage("§cYou don't have enough space in your inventory to buy this item.");
+                        // Modify the lore of the item
+                        for (String purchasedItemKey : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
+
+                            // Check if the item Displayname is the same as the item in the config
+                            if (itemToBuy.getItemMeta().getDisplayName().equals(InventoryHelper.replaceString("shop", CustomConfigs.get("shop").getString("items." + purchasedItemKey + ".displayName"), purchasedItemKey))) {
+
+                                itemPrice = CustomConfigs.get("shop").getDouble("items." + purchasedItemKey + ".price.buy");
+
+                                purchasedItemMeta.setLore(CustomConfigs.get("shop").getStringList(""));
+
+                                List<String> lore = CustomConfigs.get("shop").getStringList("items." + purchasedItemKey + ".lore");
+
+                                for (int i = 0; i < lore.size(); i++) {
+                                    lore.set(i, InventoryHelper.replaceString("shop", lore.get(i), purchasedItemKey));
+                                }
+                                purchasedItemMeta.setLore(lore);
+                                purchasedItem.setItemMeta(purchasedItemMeta);
+                                break;
+                            }
+                        }
+
+                        // Check if the player has enough money
+                        if (Main.econ.getBalance(player) >= (itemPrice * calculateAmount)) {
+
+                            // Check if the player has enough space in their inventory
+                            if (!InventoryHelper.canAddItem(player, purchasedItem)) {
+                                player.sendMessage("§cYou don't have enough space in your inventory to buy this item.");
+                                event.setCancelled(true);
+                                break;
+                            }
+
+                            player.getInventory().addItem(purchasedItem);
+
+                            Main.econ.withdrawPlayer(player, (itemPrice * calculateAmount));
+                            break;
+                        } else {
+                            player.sendMessage("§cYou don't have enough money to buy this item. (You need " + (itemPrice * calculateAmount) + ")");
                             event.setCancelled(true);
                             break;
                         }
-
-                        player.getInventory().addItem(itemToBuy);
-
-                        Main.econ.withdrawPlayer(player, CustomConfigs.get("shop").getDouble("items." + key + ".price.buy"));
-                        break;
-                    } else {
-                        player.sendMessage("§cYou don't have enough money to buy this item.");
-                        event.setCancelled(true);
-                        break;
+                    }else if (CustomConfigs.get("buyMenu").getString("items." + key + ".itemData.type").equals("SELL")) {
+                        // Check if the player wants to sell an item
                     }
                 }
             }

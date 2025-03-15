@@ -37,11 +37,10 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryClickEvent(), this);
     }
 
+    // Get the plugin instance
     public static Main getInstance() {
         return getPlugin(Main.class);
     }
-
-
 
     // Set up the economy
     private boolean setupEconomy() {
@@ -55,5 +54,4 @@ public final class Main extends JavaPlugin {
         econ = rsp.getProvider();
         return econ != null;
     }
-
 }
