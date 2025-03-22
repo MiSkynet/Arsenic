@@ -130,9 +130,6 @@ public class InventoryClickEvent implements Listener {
                         // Check if the player has enough of the item to sell
                         int buyAmount = CustomConfigs.get("buyMenu").getInt("items." + key + ".itemData.amount");
 
-                        Bukkit.getLogger().info("Amount item in the inventory: " + Main.getItemAmount(player, purchasedItem));
-                        Bukkit.getLogger().info("Amount item to buy Amount: " + buyAmount);
-
                         if (Main.getItemAmount(player, purchasedItem) >= buyAmount) {
 
                             player.getInventory().removeItem(purchasedItem);

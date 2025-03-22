@@ -48,7 +48,7 @@ public class InventoryHelper {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (material == null) {
-            Bukkit.getLogger().severe("Invalid material for key: " + key);
+            Bukkit.getLogger().severe("§cInvalid material for key: " + key);
             return new ItemStack(Material.AIR);
         }
 
