@@ -1,6 +1,7 @@
 package de.miskynet.arsenic.utils;
 
 import de.miskynet.arsenic.Main;
+import de.miskynet.arsenic.listeners.InventoryClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -33,23 +34,13 @@ public class InventoryHelper {
     public static ItemStack createItemStackFromConfig(String fileName, String key, Boolean allowGeneralLore) {
 
         // Get the material, name and lore
-        String material = "STONE";
-        String displayName = null;
-        List<String> loreFromItem = null;
-        List<String> loreGeneral = null;
-        Integer customModelData = null;
-        Integer amount = null;
-        Boolean showGeneralLore = true;
-
-        try {
-            material = CustomConfigs.get(fileName).getString("items." + key + ".material");
-            displayName = CustomConfigs.get(fileName).getString("items." + key + ".displayName");
-            loreFromItem = CustomConfigs.get(fileName).getStringList("items." + key + ".lore");
-            loreGeneral = Main.getInstance().getConfig().getStringList("generalItemLore.lore");
-            customModelData = CustomConfigs.get(fileName).getInt("items." + key + ".customModelData");
-            amount = CustomConfigs.get(fileName).getInt("items." + key + ".amount");
-            showGeneralLore = CustomConfigs.get(fileName).get("items." + key + ".showGeneralLore") != null ? CustomConfigs.get(fileName).getBoolean("items." + key + ".showGeneralLore") : true;
-        }catch (NullPointerException ignored) {}
+        String material = CustomConfigs.get(fileName).getString("items." + key + ".material") != null ? CustomConfigs.get(fileName).getString("items." + key + ".material") : "STONE";
+        String displayName = CustomConfigs.get(fileName).getString("items." + key + ".displayName") != null ? CustomConfigs.get(fileName).getString("items." + key + ".displayName"): null;
+        List<String> loreFromItem = CustomConfigs.get(fileName).getStringList("items." + key + ".lore") != null ? CustomConfigs.get(fileName).getStringList("items." + key + ".lore") : null;
+        List<String> loreGeneral = Main.getInstance().getConfig().getStringList("generalItemLore.lore") != null ? Main.getInstance().getConfig().getStringList("generalItemLore.lore") : null;
+        Integer customModelData = CustomConfigs.get(fileName).get("items." + key + ".customModelData") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".customModelData") : null;
+        Integer amount = CustomConfigs.get(fileName).get("items." + key + ".amount") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".amount") : 1;
+        Boolean showGeneralLore = CustomConfigs.get(fileName).get("items." + key + ".showGeneralLore") != null ? CustomConfigs.get(fileName).getBoolean("items." + key + ".showGeneralLore") : true;;
 
         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
 
@@ -216,40 +207,39 @@ public class InventoryHelper {
     // Replace the placeholders in the strings
     public static String replaceString(String fileName, String string, String key) {
 
-        if (fileName.equals("shop")) {
-            String priceSell = null;
-            String priceBuy = null;
+        if (string == null) {
+            return "";
+        }
 
-            try {
-                priceSell = CustomConfigs.get(fileName).getString("items." + key + ".price.sell");
-                priceBuy = CustomConfigs.get(fileName).getString("items." + key + ".price.buy");
-            }catch (NullPointerException ignored) {}
+        if (fileName.equals("shop")) {
+            Integer priceSell = CustomConfigs.get(fileName).get("items." + key + ".price.sell") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".price.sell") : null;
+            Integer priceBuy = CustomConfigs.get(fileName).get("items." + key + ".price.buy") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".price.buy") : null;
 
             if (priceSell != null) {
-                string = string.replace("%priceSell%", priceSell);
+                string = string.replace("%priceSell%", "" + priceSell);
             }
 
             if (priceBuy != null) {
-                string = string.replace("%priceBuy%", priceBuy);
+                string = string.replace("%priceBuy%", "" + priceBuy);
             }
         } else if (fileName.equals("buyMenu")) {
             Integer itemDataAmount = null;
-            Integer itemDataPrice = null;
+            double itemDataPrice =  0.0;
             String itemDataType = null;
 
             try {
                 itemDataAmount = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.amount");
-                itemDataPrice = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.price") * itemDataAmount;
+                itemDataPrice = CustomConfigs.get(fileName).getInt("items." + key + ".itemData.price");
                 itemDataType = CustomConfigs.get(fileName).getString("items." + key + ".itemData.type");
             }catch (NullPointerException ignored) {}
 
+            // Replace the amount
             if (itemDataAmount != null) {
                 string = string.replace("%itemDataAmount%", itemDataAmount.toString());
             }
 
-            if (itemDataPrice != null) {
-                string = string.replace("%itemDataPrice%", itemDataPrice.toString());
-            }
+            // Replace the price
+            string = string.replace("%itemDataPrice%", "" + itemDataPrice);
 
             if (itemDataType != null) {
                 string = string.replace("%itemDataType%", itemDataType);
