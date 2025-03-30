@@ -37,8 +37,7 @@ git clone https://github.com/MiSkynet/Arsenic
 
 You can freely modify the plugin, but you must always comply with the [license](LICENSE)!
 
-# Licence
 
-- - -
+# Licence
 
 The plugin is licensed under the MIT license! This license must always be followed! You can find the license [here](LICENSE). If you have any individual questions, feel free to contact me via DM or email.
