@@ -1,16 +1,13 @@
 package de.miskynet.arsenic.listeners;
 
 import de.miskynet.arsenic.Main;
-import de.miskynet.arsenic.utils.CustomConfigs;
-import de.miskynet.arsenic.utils.InventoryHelper;
-import org.bukkit.Bukkit;
+import de.miskynet.arsenic.utils.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryClickEvent implements Listener {
@@ -37,12 +34,58 @@ public class InventoryClickEvent implements Listener {
                 // Check if the player clicked the left mouse button
                 if (event.isLeftClick()) {
 
+                    ItemStack itemStack = Main.itemsShopMenu.get(key);
+
+                    Integer maxIndex = 0;
+                    Integer shopSize = CustomConfigs.get("shop").getInt("rows") * 9;
+
+                    // CPP = current player page
+                    Integer cpp = PaginatedMenu.playerPage.get(player.getUniqueId());
+
+                    for (String buyMenuKey : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
+                        maxIndex++;
+                    }
+
+                    // create the next page of the shop
+                    ItemStack clickedItem = null;
+                    for (String nextPreviousPage: Main.getInstance().getConfig().getConfigurationSection("menu").getKeys(false)) {
+
+                        if (nextPreviousPage.equals("next-page")) {
+
+                            if (maxIndex >= (cpp * shopSize)) {
+
+                                clickedItem = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, "available");
+
+                                if (event.getCurrentItem().isSimilar(clickedItem)) {
+                                    PaginatedMenu.playerPage.put(player.getUniqueId(), PaginatedMenu.playerPage.get(player.getUniqueId()) + 1);
+                                    player.openInventory(PaginatedMenu.setupInventory(player));
+                                    break;
+                                }
+                            }
+                        }
+
+                        // create the previous page of the shop
+                        if (nextPreviousPage.equals("previous-page")) {
+                            if (cpp != 1) {
+                                clickedItem = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, "available");
+
+                                if (event.getCurrentItem().isSimilar(clickedItem)) {
+                                    PaginatedMenu.playerPage.put(player.getUniqueId(), PaginatedMenu.playerPage.get(player.getUniqueId()) - 1);
+                                    player.openInventory(PaginatedMenu.setupInventory(player));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     // Search for the clicked item in the config
-                    if (event.getCurrentItem().getItemMeta().getDisplayName().equals(InventoryHelper.replaceString("shop", CustomConfigs.get("shop").getString("items." + key + ".displayName"), key))) {
+                    if (event.getCurrentItem().isSimilar(itemStack)) {
 
                         // Check if the clicked item is in the shop
                         if (event.getRawSlot() <= (event.getInventory().getSize() - 1)) {
-                            player.openInventory(InventoryHelper.setupBuyInventory(key));
+
+                            player.openInventory(InventoryHelper.setupBuyInventory(player, key));
+                            break;
                         }
                     }
                 }
@@ -82,7 +125,7 @@ public class InventoryClickEvent implements Listener {
                     for (String purchasedItemKey : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
 
                         // Check if the item Displayname is the same as the item in the config
-                        if (itemToBuy.getItemMeta().getDisplayName().equals(InventoryHelper.replaceString("shop", CustomConfigs.get("shop").getString("items." + purchasedItemKey + ".displayName"), purchasedItemKey))) {
+                        if (itemToBuy.getItemMeta().getDisplayName().equals(ReplaceString.replaceString("shop", CustomConfigs.get("shop").getString("items." + purchasedItemKey + ".displayName"), purchasedItemKey))) {
 
                             itemPrice = CustomConfigs.get("shop").getDouble("items." + purchasedItemKey + ".price.buy");
 
@@ -93,7 +136,7 @@ public class InventoryClickEvent implements Listener {
                             List<String> lore = CustomConfigs.get("shop").getStringList("items." + purchasedItemKey + ".lore");
 
                             for (int i = 0; i < lore.size(); i++) {
-                                lore.set(i, InventoryHelper.replaceString("shop", lore.get(i), purchasedItemKey));
+                                lore.set(i, ReplaceString.replaceString("shop", lore.get(i), purchasedItemKey));
                             }
                             purchasedItemMeta.setLore(lore);
                             purchasedItem.setItemMeta(purchasedItemMeta);

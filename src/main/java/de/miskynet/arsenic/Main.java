@@ -1,25 +1,31 @@
 package de.miskynet.arsenic;
 
+import de.miskynet.arsenic.commands.ArsenicTabCompleter;
 import de.miskynet.arsenic.commands.OpenInventory;
+import de.miskynet.arsenic.commands.Arsenic;
 import de.miskynet.arsenic.listeners.InventoryClickEvent;
+import de.miskynet.arsenic.utils.CreateItems;
 import de.miskynet.arsenic.utils.CustomConfigs;
+import de.miskynet.arsenic.utils.InventoryHelper;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+
+
 public final class Main extends JavaPlugin {
 
     public static final String missingString = "nullString";
     public static Economy econ;
+    public static HashMap<String, ItemStack> itemsShopMenu = new HashMap<>();
 
     @Override
     public void onEnable() {
 
-        // Load the configs
+        // load the configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         CustomConfigs.setup("shop");
@@ -27,25 +33,31 @@ public final class Main extends JavaPlugin {
         CustomConfigs.setup("buyMenu");
         CustomConfigs.save("buyMenu");
 
+        // set up the economy
         if (!setupEconomy() ) {
             getLogger().config("Disabled due to no Vault dependency found");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        // Register the commands
-        getCommand("shop").setExecutor(new OpenInventory());
+        // setup all items
+        loadAllItems();
 
-        // Register the events
+        // register the commands
+        getCommand("shop").setExecutor(new OpenInventory());
+        getCommand("arsenic").setExecutor(new Arsenic());
+        getCommand("arsenic").setTabCompleter(new ArsenicTabCompleter());
+
+        // register the events
         getServer().getPluginManager().registerEvents(new InventoryClickEvent(), this);
     }
 
-    // Get the plugin instance
+    // get the plugin instance
     public static Main getInstance() {
         return getPlugin(Main.class);
     }
 
-    // Set up the economy
+    // set up the economy
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return true;
@@ -58,21 +70,27 @@ public final class Main extends JavaPlugin {
         return econ != null;
     }
 
+    // get the amount of items in a players inventory
     public static Integer getItemAmount(Player player, ItemStack itemStack) {
-
         Integer itemAmountInInventory = 0;
 
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-
-            if (player.getInventory().getItem(i) != null) {
-                if (player.getInventory().getItem(i).isSimilar(itemStack)) {
-                    itemAmountInInventory += player.getInventory().getItem(i).getAmount();
-                }
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.isSimilar(itemStack)) {
+                itemAmountInInventory += item.getAmount();
             }
         }
 
         return itemAmountInInventory;
-
     }
 
+    // load all the items
+    public static void loadAllItems() {
+
+        for (String key : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
+
+            ItemStack itemStack = CreateItems.createItemStackFromConfig("shop", key, true);
+
+            itemsShopMenu.put(key, itemStack);
+        }
+    }
  }

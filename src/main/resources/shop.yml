@@ -1,3 +1,7 @@
+# Almost anything applies the same for the buyMenu.yml!
+# Any differences will be listed there
+
+
 # Define the title for the shop GUI
 title: "Shop Inventory"
 
@@ -6,17 +10,33 @@ rows: 3
 
 # Define the items that are available in the shop
 items:
+
+  # The namespace of the item (can be anything)
   diamond:
+
+    # The type of the item that you want to sell
     material: DIAMOND
+
+    # The displayName of the item
     displayName: "&bDiamond"
+
+    # CustomModelData for an item
     customModelData: 1
+
+    # The slot where the item should be placed
     slot: 7
+
+    # The amount of the item that should be displayed
     amount: 1
+
+    # If the generalLore is enabled, should it be set or not
     showGeneralLore: true
+
+    # The lore of the item
     lore:
       - "&7This is a diamond."
-      - "&7Price: &b%priceBuy%"
-      - "&7Sell price: &b%priceSell%"
+
+    # The price of the item (buy and sell)
     price:
       buy: 100
       sell: 50

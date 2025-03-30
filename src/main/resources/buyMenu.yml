@@ -18,6 +18,10 @@ items:
     lore:
       - "&7Click to buy."
     itemData:
+
+      # The type defines if the item can be bought or soled
       type: BUY
+
+      # The amount defines how many items will be bought/sold
+      # -> This is the amount the %amound% placeholder will replace
       amount: 1
-      price: 100

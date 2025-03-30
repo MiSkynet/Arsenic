@@ -13,7 +13,7 @@ public class CustomConfigs {
     private static File file;
     private static FileConfiguration customFile;
 
-    // Set up the file
+    // set up the file
     public static void setup(String filename){
         file = new File(Bukkit.getServer().getPluginManager().getPlugin(Main.getInstance().getName()).getDataFolder(), filename + ".yml");
 
@@ -28,14 +28,14 @@ public class CustomConfigs {
         customFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    // Get the file
+    // get the file
     public static FileConfiguration get(String fileName){
         file = new File(Bukkit.getServer().getPluginManager().getPlugin(Main.getInstance().getName()).getDataFolder(), fileName + ".yml");
         customFile = YamlConfiguration.loadConfiguration(file);
         return customFile;
     }
 
-    // Save the file
+    // save the file
     public static void save(String fileName){
         try{
             file = new File(Bukkit.getServer().getPluginManager().getPlugin(Main.getInstance().getName()).getDataFolder(), fileName + ".yml");
@@ -46,10 +46,15 @@ public class CustomConfigs {
         }
     }
 
-    // Reload the file
+    // reload the file
     public static void reload(String fileName){
         file = new File(Bukkit.getServer().getPluginManager().getPlugin(Main.getInstance().getName()).getDataFolder(), fileName + ".yml");
         customFile = YamlConfiguration.loadConfiguration(file);
+
+        if (fileName.equals("shop")) {
+            Main.loadAllItems();
+        }
+
     }
 
 }

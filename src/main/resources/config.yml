@@ -3,3 +3,35 @@ generalItemLore:
   lore:
     - "&7Price: %priceBuy%"
     - "&7Sell Price: %priceSell%"
+
+menu:
+  next-page:
+    available:
+      material: ARROW
+      displayName: "Next Page"
+      slot: 17
+      amount: 1
+      lore:
+        - "Click for the next page"
+    unavailable:
+      material: BARRIER
+      displayName: "Unavailable"
+      slot: 17
+      amount: 1
+      lore:
+        - "There is no next page!"
+  previous-page:
+    available:
+      material: ARROW
+      displayName: "Previous Page"
+      slot: 9
+      amount: 1
+      lore:
+        - "Click for the previous page"
+    unavailable:
+      material: BARRIER
+      displayName: "Unavailable"
+      slot: 9
+      amount: 1
+      lore:
+        - "There is no previous page!"
