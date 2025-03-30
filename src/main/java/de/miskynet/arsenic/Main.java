@@ -6,7 +6,6 @@ import de.miskynet.arsenic.commands.Arsenic;
 import de.miskynet.arsenic.listeners.InventoryClickEvent;
 import de.miskynet.arsenic.utils.CreateItems;
 import de.miskynet.arsenic.utils.CustomConfigs;
-import de.miskynet.arsenic.utils.InventoryHelper;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +13,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 
 public final class Main extends JavaPlugin {
@@ -21,6 +21,8 @@ public final class Main extends JavaPlugin {
     public static final String missingString = "nullString";
     public static Economy econ;
     public static HashMap<String, ItemStack> itemsShopMenu = new HashMap<>();
+    public static HashMap<String, ItemStack> itemsBuyMenu = new HashMap<>();
+    public static HashMap<UUID, String> currentPlayerKey = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -92,5 +94,13 @@ public final class Main extends JavaPlugin {
 
             itemsShopMenu.put(key, itemStack);
         }
+
+        for (String key : CustomConfigs.get("buyMenu").getConfigurationSection("items").getKeys(false)) {
+
+            ItemStack itemStack = CreateItems.createItemStackFromConfig("buyMenu", key, true);
+
+            itemsBuyMenu.put(key, itemStack);
+        }
+
     }
  }

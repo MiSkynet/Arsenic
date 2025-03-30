@@ -1,6 +1,5 @@
 package de.miskynet.arsenic.commands;
 
-import de.miskynet.arsenic.utils.CustomConfigs;
 import de.miskynet.arsenic.utils.PaginatedMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,6 +24,9 @@ public class OpenInventory implements CommandExecutor {
         }
 
         Player player = (Player) commandSender;
+
+        // set the player page to one
+        PaginatedMenu.playerPage.put(player.getUniqueId(), 1);
 
         // Get the title and rows from the config
         Inventory inventory = PaginatedMenu.setupInventory(player);

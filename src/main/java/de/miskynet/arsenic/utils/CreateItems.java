@@ -14,11 +14,11 @@ public class CreateItems {
     // create an item stack from the config.yml
     public static ItemStack createItemStackfromDefaultConfig(String key, String type) {
 
-        String material = Main.getInstance().getConfig().getString("menu." + key + "." + type + ".material") != null ? Main.getInstance().getConfig().getString("menu." + key + "." + type + ".material") : "STONE";
-        String displayName = Main.getInstance().getConfig().getString("menu." + key + "." + type + ".displayName") != null ? Main.getInstance().getConfig().getString("menu." + key + "." + type + ".displayName") : null;
-        List<String> lore = Main.getInstance().getConfig().getStringList("menu." + key + "." + type + ".lore") != null ? Main.getInstance().getConfig().getStringList("menu." + key + "." + type + ".lore") : null;
-        Integer customModelData = Main.getInstance().getConfig().get("menu." + key + "." + type + ".customModelData") != null ? Main.getInstance().getConfig().getInt("menu." + key + "." + type + ".customModelData") : null;
-        Integer amount = Main.getInstance().getConfig().get("menu." + key + "." + type + ".amount") != null ? Main.getInstance().getConfig().getInt("menu." + key + "." + type + ".amount") : 1;
+        String material = Main.getInstance().getConfig().getString("menu." + key + type + ".material") != null ? Main.getInstance().getConfig().getString("menu." + key + type + ".material") : "STONE";
+        String displayName = Main.getInstance().getConfig().getString("menu." + key + type + ".displayName") != null ? Main.getInstance().getConfig().getString("menu." + key + type + ".displayName") : null;
+        List<String> lore = Main.getInstance().getConfig().getStringList("menu." + key + type + ".lore") != null ? Main.getInstance().getConfig().getStringList("menu." + key + type + ".lore") : null;
+        Integer customModelData = Main.getInstance().getConfig().get("menu." + key + type + ".customModelData") != null ? Main.getInstance().getConfig().getInt("menu." + key + type + ".customModelData") : null;
+        Integer amount = Main.getInstance().getConfig().get("menu." + key + type + ".amount") != null ? Main.getInstance().getConfig().getInt("menu." + key + type + ".amount") : 1;
 
         ItemStack itemStack = new ItemStack(Material.getMaterial(material));
 
@@ -92,7 +92,7 @@ public class CreateItems {
             // lore is from the config
             if (loreFromItem == null && loreGeneral != null && allowGeneralLore && showGeneralLore) {
                 for (int i = 0; i < loreGeneral.size(); i++) {
-                    loreGeneral.set(i, ReplaceString.replaceString(fileName, loreGeneral.get(i), key));
+                    loreGeneral.set(i,"§r" + ReplaceString.replaceString(fileName, loreGeneral.get(i), key));
                 }
                 if (!(fileName.equals("buyMenu"))) {
                     itemMeta.setLore(loreGeneral);
@@ -101,7 +101,7 @@ public class CreateItems {
                 // lore is from the item
             }else if (loreFromItem != null && loreGeneral == null) {
                 for (int i = 0; i < loreFromItem.size(); i++) {
-                    loreFromItem.set(i, ReplaceString.replaceString(fileName, loreFromItem.get(i), key));
+                    loreFromItem.set(i,"§r" + ReplaceString.replaceString(fileName, loreFromItem.get(i), key));
                 }
                 itemMeta.setLore(loreFromItem);
 
@@ -127,7 +127,7 @@ public class CreateItems {
                     combinedLore.addAll(loreFromItem);
                 }
                 for (int i = 0; i < combinedLore.size(); i++) {
-                    combinedLore.set(i, ReplaceString.replaceString(fileName, combinedLore.get(i), key));
+                    combinedLore.set(i,"§r" +  ReplaceString.replaceString(fileName, combinedLore.get(i), key));
                 }
                 itemMeta.setLore(combinedLore);
             }

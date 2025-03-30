@@ -16,22 +16,6 @@ public class InventoryHelper {
     public static String itemToBuyKey;
     static HashMap<UUID, String> playerKey = new HashMap<>();
 
-    // create an inventory
-    public static Inventory createInventory(String fileName) {
-
-        String title = Main.missingString;
-        Integer rows = 9;
-
-        try {
-            title = CustomConfigs.get(fileName).getString("title");
-            rows = CustomConfigs.get(fileName).getInt("rows") * 9;
-        }catch (NullPointerException ignored) {}
-
-        Inventory inventory = Bukkit.createInventory(null, rows, title);
-
-        return inventory;
-    }
-
     // set up the buy inventory
     public static Inventory setupBuyInventory(Player player, String key) {
 
@@ -45,19 +29,20 @@ public class InventoryHelper {
         ItemStack itemStackToBuy = Main.itemsShopMenu.get(key);
         inventory.setItem(clickItemSlot, Main.itemsShopMenu.get(key));
 
-        for (String itemKey : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
+        // create the item that the player wants to buy
+        for (String secondKey : CustomConfigs.get("shop").getConfigurationSection("items").getKeys(false)) {
 
             ItemStack itemStack = Main.itemsShopMenu.get(key);
 
             if (itemStackToBuy.isSimilar(itemStack)) {
-                playerKey.put(player.getUniqueId(), itemKey);
+                playerKey.put(player.getUniqueId(), secondKey);
             }
         }
 
         // loop through all items in the config and add them to the inventory
         for (String secondKey : CustomConfigs.get("buyMenu").getConfigurationSection("items").getKeys(false)) {
 
-            ItemStack itemStack = CreateItems.createItemStackFromConfig("buyMenu", secondKey, false);
+            ItemStack itemStack = Main.itemsBuyMenu.get(secondKey);
 
             int slot = CustomConfigs.get("buyMenu").getInt("items." + secondKey + ".slot");
             if (slot != 0) {
@@ -66,6 +51,17 @@ public class InventoryHelper {
                 inventory.addItem(itemStack);
             }
         }
+
+        return inventory;
+    }
+
+    // create an inventory
+    public static Inventory createInventory(String fileName) {
+
+        String title = CustomConfigs.get(fileName).getString("title") != null ? CustomConfigs.get(fileName).getString("title") : Main.missingString;
+        Integer rows = CustomConfigs.get(fileName).get("rows") != null ? CustomConfigs.get(fileName).getInt("rows") * 9 : 9;
+
+        Inventory inventory = Bukkit.createInventory(null, rows, title);
 
         return inventory;
     }

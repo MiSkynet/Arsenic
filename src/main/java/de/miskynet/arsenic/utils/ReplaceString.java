@@ -1,6 +1,8 @@
 package de.miskynet.arsenic.utils;
 
+import de.miskynet.arsenic.Main;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public class ReplaceString {
 
@@ -37,8 +39,16 @@ public class ReplaceString {
             }
 
             // Replace the price
-            string = string.replace("%itemPriceBuy%", "" + itemToBuyPriceBuy * itemDataAmount);
-            string = string.replace("%itemPriceSell%", "" + itemToBuyPriceSell * itemDataAmount);
+            if (itemDataAmount != null) {
+
+                if (itemToBuyPriceBuy != null) {
+                    string = string.replace("%itemPriceBuy%", "" + itemToBuyPriceBuy * itemDataAmount);
+                }
+
+                if (itemToBuyPriceSell != null) {
+                    string = string.replace("%itemPriceSell%", "" + itemToBuyPriceSell * itemDataAmount);
+                }
+            }
 
             if (itemDataType != null) {
                 string = string.replace("%itemDataType%", itemDataType);
@@ -84,5 +94,4 @@ public class ReplaceString {
 
         return string;
     }
-
 }

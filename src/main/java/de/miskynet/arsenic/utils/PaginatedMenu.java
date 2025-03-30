@@ -1,7 +1,6 @@
 package de.miskynet.arsenic.utils;
 
 import de.miskynet.arsenic.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -23,6 +22,7 @@ public class PaginatedMenu {
         Inventory inventory = InventoryHelper.createInventory("shop");
 
         addItems(inventory, player);
+
         return inventory;
     }
 
@@ -43,13 +43,13 @@ public class PaginatedMenu {
 
                 if (maxIndex >= (cpp * shopSize)) {
 
-                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, "available");
+                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, ".available");
                     int slot = Main.getInstance().getConfig().getInt("menu." + nextPreviousPage + ".available.slot");
 
                     inventory.setItem(slot - 1, itemStack);
                 }else {
 
-                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, "unavailable");
+                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, ".unavailable");
                     int slot = Main.getInstance().getConfig().getInt("menu." + nextPreviousPage + ".unavailable.slot");
 
                     inventory.setItem(slot - 1, itemStack);
@@ -60,13 +60,13 @@ public class PaginatedMenu {
 
                 if (cpp != 1) {
 
-                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, "available");
+                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, ".available");
                     int slot = Main.getInstance().getConfig().getInt("menu." + nextPreviousPage + ".available.slot");
 
                     inventory.setItem(slot - 1, itemStack);
                 }else {
 
-                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, "unavailable");
+                    ItemStack itemStack = CreateItems.createItemStackfromDefaultConfig(nextPreviousPage, ".unavailable");
                     int slot = Main.getInstance().getConfig().getInt("menu." + nextPreviousPage + ".unavailable.slot");
 
                     inventory.setItem(slot - 1, itemStack);
