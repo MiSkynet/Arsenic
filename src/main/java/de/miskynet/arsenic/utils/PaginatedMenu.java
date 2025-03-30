@@ -29,8 +29,6 @@ public class PaginatedMenu {
     // add the items to the page
     private static Inventory addItems(Inventory inventory, Player player) {
 
-        Bukkit.getLogger().info("Player Page " + playerPage.get(player.getUniqueId()));
-
         Integer maxIndex = Main.itemsShopMenu.size();
         Integer shopSize = CustomConfigs.get("shop").getInt("rows") * 9;
 
