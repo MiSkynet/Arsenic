@@ -7,6 +7,7 @@ import de.miskynet.arsenic.listeners.InventoryClickEvent;
 import de.miskynet.arsenic.utils.CreateItems;
 import de.miskynet.arsenic.utils.CustomConfigs;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -27,6 +28,14 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        // set up the economy
+        if (!setupEconomy() ) {
+            getLogger().severe("Disabled due to no Vault dependency found");
+            getLogger().severe("You can download Vault here: https://www.spigotmc.org/resources/vault.34315/");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // load the configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
@@ -34,13 +43,6 @@ public final class Main extends JavaPlugin {
         CustomConfigs.save("shop");
         CustomConfigs.setup("buyMenu");
         CustomConfigs.save("buyMenu");
-
-        // set up the economy
-        if (!setupEconomy() ) {
-            getLogger().config("Disabled due to no Vault dependency found");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
 
         // setup all items
         loadAllItems();
@@ -62,11 +64,11 @@ public final class Main extends JavaPlugin {
     // set up the economy
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return true;
+            return false;
         }
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            return true;
+            return false;
         }
         econ = rsp.getProvider();
         return econ != null;
