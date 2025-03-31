@@ -1,8 +1,6 @@
 package de.miskynet.arsenic.utils;
 
-import de.miskynet.arsenic.Main;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class ReplaceString {
 
@@ -70,24 +68,12 @@ public class ReplaceString {
             string = string.replace("%displayName%", displayName);
         }
 
-        if (customModelData != null) {
-            string = string.replace("%customModelData%", customModelData.toString());
-        }
-
         if (slot != null) {
             string = string.replace("%slot%", slot.toString());
         }
 
         if (amount != null) {
             string = string.replace("%amount%", amount.toString());
-        }
-
-        if (amount != null) {
-            string = string.replace("%amount%", amount.toString());
-        }
-
-        if (slot != null) {
-            string = string.replace("%slot%", slot.toString());
         }
 
         string = ChatColor.translateAlternateColorCodes('&', string);
