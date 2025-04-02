@@ -56,9 +56,8 @@ public class ReplaceString {
 
         String material = CustomConfigs.get(fileName).getString("items." + key + ".material") != null ? CustomConfigs.get(fileName).getString("items." + key + ".material") : null;
         String displayName = CustomConfigs.get(fileName).getString("items." + key + ".displayName") != null ? CustomConfigs.get(fileName).getString("items." + key + ".displayName") : null;
-        Integer customModelData = CustomConfigs.get(fileName).get("items." + key + ".customModelData") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".customModelData") : null;
-        Integer slot = CustomConfigs.get(fileName).get("items." + key + ".amount") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".amount") : null;
-        Integer amount = CustomConfigs.get(fileName).get("items." + key + ".slot") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".slot") : null;
+        Integer slot = CustomConfigs.get(fileName).get("items." + key + ".slot") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".slot") : null;
+        Integer amount = CustomConfigs.get(fileName).get("items." + key + ".amount") != null ? CustomConfigs.get(fileName).getInt("items." + key + ".amount") : null;
 
         if (material != null) {
             string = string.replace("%material%", material);
