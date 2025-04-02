@@ -1,5 +1,6 @@
 package de.miskynet.arsenic.commands;
 
+import de.miskynet.arsenic.Main;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -12,7 +13,7 @@ public class ArsenicTabCompleter implements TabCompleter {
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
 
         if (!commandSender.hasPermission("arsenic.shop")) {
-            commandSender.sendMessage("§cSorry, but you are not allowed to use this command!");
+            commandSender.sendMessage(Main.getInstance().getConfig().getString("messages.no-permission-command"));
             return null;
         }
 

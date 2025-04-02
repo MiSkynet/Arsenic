@@ -1,5 +1,6 @@
 package de.miskynet.arsenic.commands;
 
+import de.miskynet.arsenic.Main;
 import de.miskynet.arsenic.utils.CustomConfigs;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,7 +11,7 @@ public class Arsenic implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
         if (!commandSender.hasPermission("arsenic.arsenic")) {
-            commandSender.sendMessage("§cSorry, but you are not allowed to use this command!");
+            commandSender.sendMessage(Main.getInstance().getConfig().getString("messages.no-permission-command"));
             return true;
         }
 
@@ -21,7 +22,7 @@ public class Arsenic implements CommandExecutor {
                 case "reload":
                     CustomConfigs.reload("shop");
                     CustomConfigs.reload("buyMenu");
-                    commandSender.sendMessage("§aArsenic successfully reloaded!");
+                    commandSender.sendMessage(Main.getInstance().getConfig().getString("messages.plugin-reloaded"));
                     break;
 
                 case "credits":

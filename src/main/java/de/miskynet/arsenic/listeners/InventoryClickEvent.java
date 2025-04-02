@@ -2,11 +2,9 @@ package de.miskynet.arsenic.listeners;
 
 import de.miskynet.arsenic.Main;
 import de.miskynet.arsenic.utils.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,6 +16,11 @@ public class InventoryClickEvent implements Listener {
     public static void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent event) {
 
         Player player = (Player) event.getWhoClicked();
+
+        if (!player.hasPermission("arsenic.shop.use")) {
+            player.sendMessage(Main.getInstance().getConfig().getString("messages.no-permission-shop-click"));
+            return;
+        }
 
         // check if the player clicked an item
         if (event.getCurrentItem() == null || event.getCurrentItem().getType() == null) {
@@ -170,6 +173,10 @@ public class InventoryClickEvent implements Listener {
                     // ...the player wants to exit the item
                     if (CustomConfigs.get("buyMenu").getString("items." + key  + ".itemData.type").equals("EXIT")) {
                         exitInventory(player);
+                    }
+                    // ... useless, just design
+                    if (CustomConfigs.get("buyMenu").getString("items." + key  + ".itemData.type").equals("NONE")) {
+                        return;
                     }
                 }
             }

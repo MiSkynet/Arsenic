@@ -24,7 +24,7 @@ Vault can be found [here](https://www.spigotmc.org/resources/vault.34315/). Addi
 
 # Wiki
 
-The wiki will follow in a few days and will provide more details about placeholders and the plugin itself.
+The wiki contains all information about the plugin: placeholder, config settings and more. The wiki can be found [here](https://github.com/MiSkynet/Arsenic/wiki)
 
 
 # Clone the repo

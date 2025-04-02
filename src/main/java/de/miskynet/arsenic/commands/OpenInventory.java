@@ -1,5 +1,6 @@
 package de.miskynet.arsenic.commands;
 
+import de.miskynet.arsenic.Main;
 import de.miskynet.arsenic.utils.PaginatedMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,13 +14,13 @@ public class OpenInventory implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
         if (!commandSender.hasPermission("arsenic.shop")) {
-            commandSender.sendMessage("§cSorry, but you are not allowed to use this command!");
+            commandSender.sendMessage(Main.getInstance().getConfig().getString("messages.no-permission-command"));
             return true;
         }
 
         // Check if the command sender is a player
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("You must be a player to use this command.");
+            commandSender.sendMessage(Main.getInstance().getConfig().getString("messages.no-player"));
             return true;
         }
 

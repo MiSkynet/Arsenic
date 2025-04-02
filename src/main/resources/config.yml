@@ -35,3 +35,10 @@ menu:
       amount: 1
       lore:
         - "There is no previous page!"
+
+# No placeholder can be used here!
+messages:
+  no-permission-command: "§cSorry, but you are not allowed to use this command!"
+  no-permission-shop-click: "§cSorry, but you are not allowed to buy or sell stuff in the shop!"
+  plugin-reloaded: "§aArsenic successfully reloaded!"
+  no-player: "§cYou must be a player to use this command!"
