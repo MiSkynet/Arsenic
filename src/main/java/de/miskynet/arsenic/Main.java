@@ -7,7 +7,6 @@ import de.miskynet.arsenic.listeners.InventoryClickEvent;
 import de.miskynet.arsenic.utils.CreateItems;
 import de.miskynet.arsenic.utils.CustomConfigs;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -37,8 +36,8 @@ public final class Main extends JavaPlugin {
         }
 
         // load the configs
-        getConfig().options().copyDefaults();
         saveDefaultConfig();
+        getConfig().options().copyDefaults();
         CustomConfigs.setup("shop");
         CustomConfigs.save("shop");
         CustomConfigs.setup("buyMenu");
